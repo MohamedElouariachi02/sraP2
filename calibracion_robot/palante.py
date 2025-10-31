@@ -11,25 +11,26 @@ from math import pi
 
 large_motor_l = LargeMotor(OUTPUT_B)
 large_motor_r = LargeMotor(OUTPUT_A)
-diemetroRueda = 0.055
+diametroRueda = 0.055
 distanciaRuedas = 0.12
 
+giroRueda = (2*pi*(diametroRueda/2))
 
-def recto(distancia):
-    large_motor_l.on_for_degrees(speed=50, degrees=-360 * 0.5/(2*pi*(diemetroRueda/2)), brake=True, block=False)
-    large_motor_r.on_for_degrees(speed=50, degrees=-360 * 0.5/(2*pi*(diemetroRueda/2)), brake=True, block=True)
+def recto():
+    large_motor_l.on_for_degrees(speed=50, degrees=-360 * 0.5/giroRueda, brake=True, block=False)
+    large_motor_r.on_for_degrees(speed=50, degrees=-360 * 0.5/giroRueda, brake=True, block=True)
 
-def giro(angulo):
-    large_motor_l.on_for_degrees(speed=50, degrees=360 * angulo, brake=True, block=False)
-    large_motor_r.on_for_degrees(speed=50, degrees=-360 * angulo, brake=True, block=True)
+def giro():
+    large_motor_l.on_for_degrees(speed=50, degrees=360 * ((2*pi*distanciaRuedas/2)/4)/giroRueda, brake=True, block=False)
+    large_motor_r.on_for_degrees(speed=50, degrees=-360 * ((2*pi*distanciaRuedas/2)/4)/giroRueda, brake=True, block=True)
 
 
 os.system('setfont Lat15-TerminusBold14')
 
 sound = Sound()
 for i in range(4):
-    recto(0.5)
-    giro(2.89)
+    recto()
+    giro()
 
 
 
