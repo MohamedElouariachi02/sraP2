@@ -1,0 +1,3 @@
+Diámetro de las ruedas: 5.5 cm
+
+Distancia entre ruedas: 12 cm
