@@ -17,22 +17,23 @@ distanciaRuedas = 0.12
 giroRueda = (2*pi*(diametroRueda/2))
 
 def recto():
-    large_motor_l.on_for_degrees(speed=50, degrees=-360 * 0.5/giroRueda, brake=True, block=False)
-    large_motor_r.on_for_degrees(speed=50, degrees=-360 * 0.5/giroRueda, brake=True, block=True)
+    large_motor_l.on_for_degrees(speed=25, degrees=360 * 0.5/giroRueda, brake=True, block=False)
+    large_motor_r.on_for_degrees(speed=25, degrees=360 * 0.5/giroRueda, brake=True, block=True)
 
 def giro():
-    large_motor_l.on_for_degrees(speed=50, degrees=360 * ((2*pi*distanciaRuedas/2)/4)/giroRueda, brake=True, block=False)
-    large_motor_r.on_for_degrees(speed=50, degrees=-360 * ((2*pi*distanciaRuedas/2)/4)/giroRueda, brake=True, block=True)
+    large_motor_l.on_for_degrees(speed=25, degrees=-360 * ((2*pi*distanciaRuedas/2)/4)/giroRueda, brake=True, block=False)
+    large_motor_r.on_for_degrees(speed=25, degrees=360 * ((2*pi*distanciaRuedas/2)/4)/giroRueda, brake=True, block=True)
 
 
 os.system('setfont Lat15-TerminusBold14')
 
 sound = Sound()
+sound.beep()
 for i in range(4):
     recto()
+    sleep(0.15)
     giro()
-
-
+    sleep(0.15)
 
 sound.beep()
 sleep(1)
@@ -42,4 +43,3 @@ alpha = 50 / 5.5
 
 sleep(1)
 sound.beep()
-
