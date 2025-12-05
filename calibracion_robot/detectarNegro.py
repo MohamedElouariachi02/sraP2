@@ -31,7 +31,7 @@ def parar():
     large_motor_l.off(brake=True)
     large_motor_r.off(brake=True)
 
-def girar(grados_robot, velocidad=25):
+def girar(grados_robot, velocidad=25, block=False):
     # perímetro del círculo que trazan las ruedas al girar
     perimetro_giro_robot = pi * DISTANCIA_RUEDAS
     distancia_a_recorrer = (grados_robot / 360) * perimetro_giro_robot
@@ -41,7 +41,7 @@ def girar(grados_robot, velocidad=25):
     grados_motor = vueltas_rueda * 360
 
     large_motor_l.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
-    large_motor_r.on_for_degrees(speed=velocidad, degrees=-grados_motor, brake=True, block=True)
+    large_motor_r.on_for_degrees(speed=velocidad, degrees=-grados_motor, brake=True, block=block)
 
 
 os.system('setfont Lat15-TerminusBold14')
@@ -67,20 +67,36 @@ sound.beep()
 
 nombre_archivo = 'datos_robot.csv'
 
-with open(nombre_archivo, 'w') as archivo:
-    archivo.write("grados,distancia_ultrasonido,intensidad_luz\n")
-    
-    for grado_actual in range(90):
-        distancia = ultrasonic_sensor.distance_centimeters
-        luz = color_sensor.reflected_light_intensity
-        print("G:{} | D:{:.1f}cm | L:{}%".format(grado_actual, distancia, luz))
-        archivo.write("{},{},{}\n".format(grado_actual, distancia, luz))
 
-        girar(90)
-        grados = 0
-        grados+=1
+for grado_actual in range(90):
+    distancia = ultrasonic_sensor.distance_centimeters
+    luz = color_sensor.reflected_light_intensity
+    print("G:{} | D:{:.1f}cm | L:{}%".format(grado_actual, distancia, luz))
+
+    girar(90, 1)
+    contador_255 = 0
+    grados = 0
+    while ultrasonic_sensor.distance_centimeters != 255:
+        parar()
+        start = True
+    
+    while contador_255 < 10 and start == True:
+        girar(1, 1, block=True)
+        grados += 1
+        distancia = ultrasonic_sensor.distance_centimeters
+
+        if distancia == 255:
+            contador_255 += 1
+        else:
+            contador_255 = 0
+        start = False
+    girar(-grados/2)
+
+        
 
 sound.beep()
 print("Guardado en {}".format(nombre_archivo))
 
 sound.beep()
+
+
