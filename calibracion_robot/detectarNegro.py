@@ -83,9 +83,9 @@ for grado_actual in range(90):
     while contador_255 < 10:
         girar(1, 1, block=True)
         grados += 1
-        distancia = ultrasonic_sensor.distance_centimeters
+        distancia2 = ultrasonic_sensor.distance_centimeters
 
-        if distancia == 255:
+        if distancia2 >= distancia*0.7:
             contador_255 += 1
         else:
             contador_255 = 0
