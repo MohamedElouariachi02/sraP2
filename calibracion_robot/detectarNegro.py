@@ -25,7 +25,11 @@ def recto(distancia_m, velocidad=25):
     grados_motor = vueltas_rueda * 360
 
     large_motor_l.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
-    large_motor_r.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=True)
+    large_motor_r.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
+
+def parar():
+    large_motor_l.off(brake=True)
+    large_motor_r.off(brake=True)
 
 def girar(grados_robot, velocidad=25):
     # perímetro del círculo que trazan las ruedas al girar
@@ -45,7 +49,6 @@ os.system('setfont Lat15-TerminusBold14')
 sound = Sound()
 sound.beep()
 
-nombre_archivo = 'datos_robot.csv'
 
 blanco = 0
 for i in range(10):
@@ -53,13 +56,31 @@ for i in range(10):
 
 blanco /= 10
 
-while color_sensor.reflected_light_intensity < (blanco * 0.7):
-    recto(1)
+# Etapa 1: Buscar línea
+recto(2)
+while color_sensor.reflected_light_intensity > (blanco * 0.7):
+    continue
+parar()
+sound.beep()
 
+# Etapa 2: Girar y medir
 
+nombre_archivo = 'datos_robot.csv'
+
+with open(nombre_archivo, 'w') as archivo:
+    archivo.write("grados,distancia_ultrasonido,intensidad_luz\n")
+    
+    for grado_actual in range(90):
+        distancia = ultrasonic_sensor.distance_centimeters
+        luz = color_sensor.reflected_light_intensity
+        print("G:{} | D:{:.1f}cm | L:{}%".format(grado_actual, distancia, luz))
+        archivo.write("{},{},{}\n".format(grado_actual, distancia, luz))
+
+        girar(90)
+        grados = 0
+        grados+=1
 
 sound.beep()
-print(f"Guardado en {nombre_archivo}")
+print("Guardado en {}".format(nombre_archivo))
 
 sound.beep()
-sleep(1)

@@ -53,13 +53,13 @@ with open(nombre_archivo, 'w') as archivo:
     for grado_actual in range(360):
         distancia = ultrasonic_sensor.distance_centimeters
         luz = color_sensor.reflected_light_intensity
-        print(f"G:{grado_actual} | D:{distancia:.1f}cm | L:{luz}%")
-        archivo.write(f"{grado_actual},{distancia},{luz}\n")
+        print("G:{} | D:{:.1f}cm | L:{}%".format(grado_actual, distancia, luz))
+        archivo.write("{},{},{}\n".format(grado_actual, distancia, luz))
 
         girar(1)
 
 sound.beep()
-print(f"Guardado en {nombre_archivo}")
+print("Guardado en {}".format(nombre_archivo))
 
 sound.beep()
 sleep(1)
