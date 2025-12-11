@@ -43,9 +43,6 @@ def girar(grados_robot, velocidad=25, block=False):
     large_motor_l.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
     large_motor_r.on_for_degrees(speed=velocidad, degrees=-grados_motor, brake=True, block=block)
 
-def girar_grados_lentos(grados, velocidad=10):
-    large_motor_l.on_for_degrees(velocidad, grados, block=False)
-    large_motor_r.on_for_degrees(-velocidad, grados, block=True)
 
 def buscar_palos():
     angulo = 0
@@ -55,7 +52,7 @@ def buscar_palos():
     distancia_prev = ultrasonic_sensor.distance_centimeters
 
     while angulo < 180:
-        girar_grados_lentos(2)
+        girar(2, velocidad=10, block=True)  
         sleep(0.05)
         angulo += 2
 
@@ -72,7 +69,7 @@ def buscar_palos():
 
         distancia_prev = distancia_actual
 
-    return palo1, palo2
+    return palo1, palo2, angulo
 
 os.system('setfont Lat15-TerminusBold14')
 
@@ -95,10 +92,8 @@ sound.beep()
 
 # Etapa 2: Girar y medir
 
-nombre_archivo = 'datos_robot.csv'
+palo1, palo2, angulo_final = buscar_palos()
 
-
-palo1, palo2 = buscar_palos()
 
 if palo1 is None or palo2 is None:
     print("No se detectaron dos palos.")
@@ -107,13 +102,13 @@ else:
     print("Palo 2:", palo2, "grados")
 
     centro = (palo1 + palo2) / 2
-    girar(centro, velocidad=15, block=True)
+    delta = centro - angulo_final
+    girar(delta, velocidad=15, block=True)
     sound.beep()
 
-        
+
 
 sound.beep()
-print("Guardado en {}".format(nombre_archivo))
 
 sound.beep()
 
