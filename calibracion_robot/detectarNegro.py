@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+import math
+import os
+from math import pi
+from time import sleep
+
+from ev3dev2.led import Leds
+from ev3dev2.motor import OUTPUT_A, OUTPUT_B, LargeMotor
+from ev3dev2.sensor import INPUT_1, INPUT_2
+from ev3dev2.sensor.lego import ColorSensor, TouchSensor, UltrasonicSensor
+from ev3dev2.sound import Sound
+
+large_motor_l = LargeMotor(OUTPUT_B)
+large_motor_r = LargeMotor(OUTPUT_A)
+
+ultrasonic_sensor = UltrasonicSensor(INPUT_2)
+color_sensor = ColorSensor(INPUT_1)
+
+DIAMETRO_RUEDA = 0.055
+DISTANCIA_RUEDAS = 0.12
+PERIMETRO_RUEDA = pi * DIAMETRO_RUEDA
+
+def recto(distancia_m, velocidad=25):
+    vueltas_rueda = distancia_m / PERIMETRO_RUEDA
+    grados_motor = vueltas_rueda * 360
+
+    large_motor_l.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
+    large_motor_r.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
+
+def parar():
+    large_motor_l.off(brake=True)
+    large_motor_r.off(brake=True)
+
+def girar(grados_robot, velocidad=25, block=False):
+    # perímetro del círculo que trazan las ruedas al girar
+    perimetro_giro_robot = pi * DISTANCIA_RUEDAS
+    distancia_a_recorrer = (grados_robot / 360) * perimetro_giro_robot
+    
+    # distancia a grados del motor
+    vueltas_rueda = distancia_a_recorrer / PERIMETRO_RUEDA
+    grados_motor = vueltas_rueda * 360
+
+    large_motor_l.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
+    large_motor_r.on_for_degrees(speed=velocidad, degrees=-grados_motor, brake=True, block=block)
+
+
+os.system('setfont Lat15-TerminusBold14')
+
+sound = Sound()
+sound.beep()
+
+
+blanco = 0
+for i in range(10):
+    blanco += color_sensor.reflected_light_intensity
+
+blanco /= 10
+
+# Etapa 1: Buscar línea
+recto(2)
+while color_sensor.reflected_light_intensity > (blanco * 0.7):
+    continue
+parar()
+sound.beep()
+
+# Etapa 2: Girar y medir
+
+nombre_archivo = 'datos_robot.csv'
+
+
+for grado_actual in range(90):
+    distancia = ultrasonic_sensor.distance_centimeters
+    luz = color_sensor.reflected_light_intensity
+    print("G:{} | D:{:.1f}cm | L:{}%".format(grado_actual, distancia, luz))
+
+    girar(90, 1)
+    contador_255 = 0
+    grados = 0
+    no_porteria = ultrasonic_sensor.distance_centimeters
+    i = 1        
+
+    while ultrasonic_sensor.distance_centimeters >= (no_porteria/i)*0.7:
+        i +=1
+        no_porteria += ultrasonic_sensor.distance_centimeters
+    sound.beep()
+    parar()
+    
+    
+    while contador_255 < 10:
+        girar(1, block=True)
+        grados += 1
+        distancia2 = ultrasonic_sensor.distance_centimeters
+
+        if distancia2 >= distancia*0.7:
+            contador_255 += 1
+        else:
+            contador_255 = 0
+    sound.beep()
+    girar(-grados/2)
+
+        
+
+sound.beep()
+print("Guardado en {}".format(nombre_archivo))
+
+sound.beep()
+
+
