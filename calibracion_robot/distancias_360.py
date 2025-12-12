@@ -17,7 +17,7 @@ ultrasonic_sensor = UltrasonicSensor(INPUT_2)
 color_sensor = ColorSensor(INPUT_1)
 
 DIAMETRO_RUEDA = 0.055
-DISTANCIA_RUEDAS = 0.12
+DISTANCIA_RUEDAS = 0.1147
 PERIMETRO_RUEDA = pi * DIAMETRO_RUEDA
 
 def recto(distancia_m, velocidad=25):
