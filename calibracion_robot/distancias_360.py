@@ -47,7 +47,7 @@ sound.beep()
 
 nombre_archivo = 'datos_robot.csv'
 
-with open(nombre_archivo, 'w') as archivo:
+with open(nombre_archivo, 'a') as archivo:
     archivo.write("grados,distancia_ultrasonido,intensidad_luz\n")
     
     for grado_actual in range(360):
