@@ -14,11 +14,13 @@ large_motor_l = LargeMotor(OUTPUT_B)
 large_motor_r = LargeMotor(OUTPUT_A)
 arm_motor = MediumMotor(OUTPUT_D)
 
+
+
 ultrasonic_sensor = UltrasonicSensor(INPUT_2)
 color_sensor = ColorSensor(INPUT_1)
 
 DIAMETRO_RUEDA = 0.055
-DISTANCIA_RUEDAS = 0.1147
+DISTANCIA_RUEDAS = 0.11
 PERIMETRO_RUEDA = pi * DIAMETRO_RUEDA
 
 def recto(distancia_m, velocidad=25):
@@ -46,24 +48,28 @@ def girar(grados_robot, velocidad=25, block=False):
 
 
 def subir_brazo():
-    arm_motor.on_for_degrees(speed=20, degrees=20, brake=True, block=True)
+    arm_motor.on_for_degrees(speed=20, degrees=-40, brake=True, block=True)
+    sleep(1)
+    arm_motor.on_for_degrees(speed=20, degrees=40, brake=True, block=True)
+
 
 def buscar_palos():
     angulo = 0
     palo1 = None
     palo2 = None
-    degrees = 8
+    degrees = 3
 
     distancia_prev = ultrasonic_sensor.distance_centimeters
 
     while angulo < 180:
         girar(degrees, velocidad=10, block=True)  
         sleep(0.05)
+        print("Distancia prev:", distancia_prev)
         angulo += degrees 
 
         distancia_actual = ultrasonic_sensor.distance_centimeters
 
-        if distancia_actual < distancia_prev * 0.7:
+        if distancia_actual < distancia_prev * 0.6:
             sound.beep()
 
             if palo1 is None:
@@ -78,8 +84,13 @@ def buscar_palos():
 
 os.system('setfont Lat15-TerminusBold14')
 
+
+
+
 sound = Sound()
 sound.beep()
+
+sound.speak("Hello guys, I love you")
 
 
 blanco = 0
@@ -119,6 +130,8 @@ sound.beep()
 
 
 girar(-180, velocidad=15, block=True)
+sleep(1)
 subir_brazo()
+sleep(1)
 girar(180, velocidad=15, block=True)
 
