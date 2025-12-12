@@ -46,6 +46,27 @@ def girar(grados_robot, velocidad=25, block=False):
     large_motor_l.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
     large_motor_r.on_for_degrees(speed=velocidad, degrees=-grados_motor, brake=True, block=block)
 
+def girar_negro(grados_robot, velocidad=25, block=False):
+    # perímetro del círculo que trazan las ruedas al girar
+    perimetro_giro_robot = pi * DISTANCIA_RUEDAS
+    distancia_a_recorrer = (grados_robot / 360) * perimetro_giro_robot
+    
+    # distancia a grados del motor
+    vueltas_rueda = distancia_a_recorrer / PERIMETRO_RUEDA
+    grados_motor = vueltas_rueda * 360
+
+    large_motor_l.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
+
+def girar_blanco(grados_robot, velocidad=25, block=False):
+    # perímetro del círculo que trazan las ruedas al girar
+    perimetro_giro_robot = pi * DISTANCIA_RUEDAS
+    distancia_a_recorrer = (grados_robot / 360) * perimetro_giro_robot
+    
+    # distancia a grados del motor
+    vueltas_rueda = distancia_a_recorrer / PERIMETRO_RUEDA
+    grados_motor = vueltas_rueda * 360
+
+    large_motor_r.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
 
 def subir_brazo():
     arm_motor.on_for_degrees(speed=20, degrees=-40, brake=True, block=True)
@@ -106,6 +127,16 @@ while color_sensor.reflected_light_intensity > (blanco * 0.7):
 parar()
 sound.beep()
 
+contador =3
+while (contador != 0):
+    if color_sensor.reflected_light_intensity > (blanco * 0.7):
+        girar_blanco(30, velocidad=15, block=False)
+        contador -= 1
+    else:
+        girar_negro(30, velocidad=15, block=True)
+        contador -= 1
+sound.beep()
+
 # Etapa 2: Girar y medir
 
 palo1, palo2, angulo_final = buscar_palos()
@@ -134,4 +165,3 @@ sleep(1)
 subir_brazo()
 sleep(1)
 girar(180, velocidad=15, block=True)
-
