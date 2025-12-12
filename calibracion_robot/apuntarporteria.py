@@ -5,19 +5,20 @@ from math import pi
 from time import sleep
 
 from ev3dev2.led import Leds
-from ev3dev2.motor import OUTPUT_A, OUTPUT_B, LargeMotor
+from ev3dev2.motor import OUTPUT_A, OUTPUT_B, OUTPUT_C, LargeMotor
 from ev3dev2.sensor import INPUT_1, INPUT_2
 from ev3dev2.sensor.lego import ColorSensor, TouchSensor, UltrasonicSensor
 from ev3dev2.sound import Sound
 
 large_motor_l = LargeMotor(OUTPUT_B)
 large_motor_r = LargeMotor(OUTPUT_A)
+arm_motor = LargeMotor(OUTPUT_C)
 
 ultrasonic_sensor = UltrasonicSensor(INPUT_2)
 color_sensor = ColorSensor(INPUT_1)
 
 DIAMETRO_RUEDA = 0.055
-DISTANCIA_RUEDAS = 0.12
+DISTANCIA_RUEDAS = 0.1147
 PERIMETRO_RUEDA = pi * DIAMETRO_RUEDA
 
 def recto(distancia_m, velocidad=25):
@@ -43,6 +44,9 @@ def girar(grados_robot, velocidad=25, block=False):
     large_motor_l.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
     large_motor_r.on_for_degrees(speed=velocidad, degrees=-grados_motor, brake=True, block=block)
 
+
+def subir_brazo():
+    arm_motor.on_for_degrees(speed=20, degrees=20, brake=True, block=True)
 
 def buscar_palos():
     angulo = 0
@@ -113,6 +117,7 @@ sound.beep()
 sound.beep()
 
 
-
-
+girar(-180, velocidad=15, block=True)
+subir_brazo()
+girar(180, velocidad=15, block=True)
 
