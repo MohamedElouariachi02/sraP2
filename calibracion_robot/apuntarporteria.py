@@ -5,14 +5,14 @@ from math import pi
 from time import sleep
 
 from ev3dev2.led import Leds
-from ev3dev2.motor import OUTPUT_A, OUTPUT_B, OUTPUT_C, LargeMotor
+from ev3dev2.motor import OUTPUT_A, OUTPUT_B, OUTPUT_D, LargeMotor, MediumMotor
 from ev3dev2.sensor import INPUT_1, INPUT_2
 from ev3dev2.sensor.lego import ColorSensor, TouchSensor, UltrasonicSensor
 from ev3dev2.sound import Sound
 
 large_motor_l = LargeMotor(OUTPUT_B)
 large_motor_r = LargeMotor(OUTPUT_A)
-arm_motor = LargeMotor(OUTPUT_C)
+arm_motor = MediumMotor(OUTPUT_D)
 
 ultrasonic_sensor = UltrasonicSensor(INPUT_2)
 color_sensor = ColorSensor(INPUT_1)
@@ -52,13 +52,14 @@ def buscar_palos():
     angulo = 0
     palo1 = None
     palo2 = None
+    degrees = 8
 
     distancia_prev = ultrasonic_sensor.distance_centimeters
 
     while angulo < 180:
-        girar(2, velocidad=10, block=True)  
+        girar(degrees, velocidad=10, block=True)  
         sleep(0.05)
-        angulo += 2
+        angulo += degrees 
 
         distancia_actual = ultrasonic_sensor.distance_centimeters
 
