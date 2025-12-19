@@ -86,7 +86,7 @@ def buscar_palos():
     angulo = 0
     palo1 = None
     palo2 = None
-    degrees = 3
+    degrees = 6
 
     distancia_prev = ultrasonic_sensor.distance_centimeters
 
@@ -135,7 +135,7 @@ while color_sensor.reflected_light_intensity > (blanco * 0.7):
 parar()
 sound.beep()
 
-seguir_linea(seconds=3)
+seguir_linea(seconds=2)
 sound.beep()
 
 # Etapa 2: Girar y medir
@@ -168,5 +168,5 @@ sleep(1)
 girar(180, velocidad=15, block=True)
 sound.beep()
 
-seguir_linea(seconds=3)
+seguir_linea(seconds=10)
 sound.beep()
