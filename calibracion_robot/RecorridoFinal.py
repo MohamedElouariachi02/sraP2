@@ -78,10 +78,8 @@ def seguir_linea(seconds=3):
     start = time.time()
     while time.time() - start < seconds:
         if color_sensor.reflected_light_intensity > (blanco * 0.7):
-            # Ve blanco → buscar negro
             girar_negro(5, velocidad=10, block=True)
         else:
-            # Ve negro → corregir hacia blanco
             girar_blanco(5, velocidad=10, block=True)
 
 def buscar_palos():
@@ -131,17 +129,18 @@ for i in range(10):
 blanco /= 10
 
 # Etapa 1: Buscar línea
-recto(2)
+#recto(2)
 while color_sensor.reflected_light_intensity > (blanco * 0.7):
     continue
-parar()
+#parar()
 sound.beep()
 
-seguir_linea(seconds=3)
+#seguir_linea(seconds=3)
 sound.beep()
 
 # Etapa 2: Girar y medir
-girar(-90, velocidad=10, block=True) 
+for grado in range(90):
+    girar(-1, velocidad=10, block=True)
 palo1, palo2, angulo_final = buscar_palos()
 
 
