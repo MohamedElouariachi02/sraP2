@@ -24,6 +24,16 @@ DIAMETRO_RUEDA = 0.055
 DISTANCIA_RUEDAS = 0.11
 PERIMETRO_RUEDA = pi * DIAMETRO_RUEDA
 
+
+def get_baseline_read_for_white(number_of_reads=10):
+    blanco = 0
+    for i in range(number_of_reads):
+        blanco += color_sensor.reflected_light_intensity
+
+    return blanco / number_of_reads
+
+    
+
 def recto(distancia_m, velocidad=25):
     vueltas_rueda = distancia_m / PERIMETRO_RUEDA
     grados_motor = vueltas_rueda * 360
@@ -47,7 +57,7 @@ def girar(grados_robot, velocidad=25, block=False):
     large_motor_l.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
     large_motor_r.on_for_degrees(speed=velocidad, degrees=-grados_motor, brake=True, block=block)
 
-def girar_negro(grados_robot, velocidad=25, block=False):
+def girar_negro(grados_robot, velocidad=25, block=True):
     # perímetro del círculo que trazan las ruedas al girar
     perimetro_giro_robot = pi * DISTANCIA_RUEDAS
     distancia_a_recorrer = (grados_robot / 360) * perimetro_giro_robot
@@ -56,9 +66,9 @@ def girar_negro(grados_robot, velocidad=25, block=False):
     vueltas_rueda = distancia_a_recorrer / PERIMETRO_RUEDA
     grados_motor = vueltas_rueda * 360
 
-    large_motor_l.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
+    large_motor_l.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=block)
 
-def girar_blanco(grados_robot, velocidad=25, block=False):
+def girar_blanco(grados_robot, velocidad=25, block=True):
     # perímetro del círculo que trazan las ruedas al girar
     perimetro_giro_robot = pi * DISTANCIA_RUEDAS
     distancia_a_recorrer = (grados_robot / 360) * perimetro_giro_robot
@@ -67,7 +77,7 @@ def girar_blanco(grados_robot, velocidad=25, block=False):
     vueltas_rueda = distancia_a_recorrer / PERIMETRO_RUEDA
     grados_motor = vueltas_rueda * 360
 
-    large_motor_r.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=False)
+    large_motor_r.on_for_degrees(speed=velocidad, degrees=grados_motor, brake=True, block=block)
 
 def subir_brazo():
     arm_motor.on_for_degrees(speed=20, degrees=-40, brake=True, block=True)
@@ -78,15 +88,15 @@ def seguir_linea(seconds=3):
     start = time.time()
     while time.time() - start < seconds:
         if color_sensor.reflected_light_intensity > (blanco * 0.7):
-            girar_negro(5, velocidad=10, block=True)
+            girar_negro(10, velocidad=40)
         else:
-            girar_blanco(5, velocidad=10, block=True)
+            girar_blanco(10, velocidad=40)
 
 def buscar_palos():
     angulo = 0
     palo1 = None
     palo2 = None
-    degrees = 6
+    degrees = 3
 
     distancia_prev = ultrasonic_sensor.distance_centimeters
 
@@ -113,20 +123,12 @@ def buscar_palos():
 
 os.system('setfont Lat15-TerminusBold14')
 
-
-
-
 sound = Sound()
 sound.beep()
 
 #sound.speak("Hello guys, I love you")
 
-
-blanco = 0
-for i in range(10):
-    blanco += color_sensor.reflected_light_intensity
-
-blanco /= 10
+blanco = get_baseline_read_for_white()
 
 # Etapa 1: Buscar línea
 recto(2)
@@ -135,12 +137,11 @@ while color_sensor.reflected_light_intensity > (blanco * 0.7):
 parar()
 sound.beep()
 
-seguir_linea(seconds=2)
+seguir_linea(seconds=15)
 sound.beep()
 
 # Etapa 2: Girar y medir
-for grado in range(90):
-    girar(-1, velocidad=10, block=True)
+girar(-90, velocidad=40, block=True)
 palo1, palo2, angulo_final = buscar_palos()
 
 
@@ -151,22 +152,18 @@ else:
     print("Palo 2:", palo2, "grados")
 
     centro = (palo1 + palo2) / 2
-    delta = centro - angulo_final
+    ajuste = centro/4
+    delta = centro - angulo_final + ajuste
     girar(delta, velocidad=15, block=True)
     sound.beep()
 
-
-
-
 sound.beep()
-
 
 girar(-180, velocidad=15, block=True)
 sleep(1)
 subir_brazo()
-sleep(1)
 girar(180, velocidad=15, block=True)
 sound.beep()
 
-seguir_linea(seconds=10)
+seguir_linea(seconds=40)
 sound.beep()
