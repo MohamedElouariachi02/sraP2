@@ -119,7 +119,7 @@ os.system('setfont Lat15-TerminusBold14')
 sound = Sound()
 sound.beep()
 
-sound.speak("Hello guys, I love you")
+#sound.speak("Hello guys, I love you")
 
 
 blanco = 0
