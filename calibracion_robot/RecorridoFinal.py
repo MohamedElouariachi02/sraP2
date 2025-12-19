@@ -129,13 +129,13 @@ for i in range(10):
 blanco /= 10
 
 # Etapa 1: Buscar línea
-#recto(2)
+recto(2)
 while color_sensor.reflected_light_intensity > (blanco * 0.7):
     continue
-#parar()
+parar()
 sound.beep()
 
-#seguir_linea(seconds=3)
+seguir_linea(seconds=3)
 sound.beep()
 
 # Etapa 2: Girar y medir
