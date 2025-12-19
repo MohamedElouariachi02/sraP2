@@ -1,3 +1,6 @@
 ancho de la cinta: 2.5 cm
 distancia entre palos de portería: 35 cm
 distancia palo a cinta: 16.25 cm
+altura palo porteria: 12 cm
+diametro/ancho palo porteria: 5-6 cm
+ 
