@@ -111,7 +111,7 @@ os.system('setfont Lat15-TerminusBold14')
 sound = Sound()
 sound.beep()
 
-sound.speak("Hello guys, I love you")
+#sound.speak("Hello guys, I love you")
 
 
 blanco = 0
@@ -127,13 +127,22 @@ while color_sensor.reflected_light_intensity > (blanco * 0.7):
 parar()
 sound.beep()
 
-contador =3
+contador = 50
+is_black = False
 while (contador != 0):
     if color_sensor.reflected_light_intensity > (blanco * 0.7):
         girar_blanco(30, velocidad=15, block=False)
+        if not is_black:
+            continue
+        parar()
+        is_black = False
         contador -= 1
     else:
-        girar_negro(30, velocidad=15, block=True)
+        girar_negro(30, velocidad=15, block=False)
+        if is_black:
+            continue
+        parar()
+        is_black = True
         contador -= 1
 sound.beep()
 
