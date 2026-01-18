@@ -18,13 +18,8 @@ L = 0.5
 giroRueda = (2*pi*(diametroRueda/2))
 
 def recto():
-<<<<<<< HEAD
-    large_motor_l.on_for_degrees(speed=50, degrees=-360 * L/giroRueda, brake=True, block=False)
-    large_motor_r.on_for_degrees(speed=50, degrees=-360 * L/giroRueda, brake=True, block=True)
-=======
     large_motor_l.on_for_degrees(speed=25, degrees=360 * 0.5/giroRueda, brake=True, block=False)
     large_motor_r.on_for_degrees(speed=25, degrees=360 * 0.5/giroRueda, brake=True, block=True)
->>>>>>> cda546b2da80c05c1ec60e24b61edc8027b6fed6
 
 def giro():
     large_motor_l.on_for_degrees(speed=25, degrees=-360 * ((2*pi*distanciaRuedas/2)/4)/giroRueda, brake=True, block=False)
