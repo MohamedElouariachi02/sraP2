@@ -101,20 +101,17 @@ girar_con_accion(
 )
 valles = analizar_valles(points, umbral_distancia=60, max_salto=20, grados_totales=180)
 palos = sorted(valles, key=lambda valle: valle[1])[:2]
-print("Puntos obtenidos cerca de la porteria: ", len(points))
 print("angs: ", [palo[0] for palo in palos])
 
 distancia_porteria = 0
 if len(palos) == 1:
     angulo_a_girar = palos[0][0] #- 180
     distancia_porteria = palos[0][1]
-    print("ang_valle: ", round(palos[0][0], 1), ", ang_a_girar: ", round(angulo_a_girar, 1))
     girar(angulo_a_girar, 30, True)
 elif len(palos) == 2:
     angulo_medio = (palos[0][0] + palos[1][0]) / 2.0
     angulo_a_girar = angulo_medio #- 180
     distancia_porteria = (palos[0][1] + palos[1][1]) / 2.0
-    print("ang_valle: ", round(angulo_medio, 1), ", ang_a_girar: ", round(angulo_a_girar, 1))
     girar(angulo_a_girar, 30, True)
 else:
     time.sleep(1)

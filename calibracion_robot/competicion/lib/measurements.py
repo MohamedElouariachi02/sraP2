@@ -100,69 +100,9 @@ def convertir_tiempo_a_angulo(points, grados_totales=360):
         datos_angulares.append((angulo, distancia))
     return datos_angulares
 
-def fusionar_valles_cercanos(valles, max_gap_grados=20, max_diff_distancia=30):
-    """
-    Toma una lista de valles detectados y mira si los vecinos estan
-    lo suficientemente cerca para ser considerados el mismo objeto (la porteria).
-
-    Args:
-        valles: Lista de dicts {'centro', 'distancia', 'ancho', 'min_ang', 'max_ang'}
-        max_gap_grados: Maxima separacion angular para juntarlos (hueco entre palos)
-        max_diff_distancia: Diferencia de profundidad permitida para juntarlos
-    """
-    if not valles:
-        return []
-
-    valles_limpios = []
-    # Empezamos con el primer valle como el "actual"
-    valle_actual = valles[0]
-
-    for i in range(1, len(valles)):
-        siguiente = valles[i]
-
-        # Calculamos el hueco entre el final del actual y el inicio del siguiente
-        hueco = siguiente['min_ang'] - valle_actual['max_ang']
-
-        # Diferencia de profundidad (distancia)
-        diff_dist = abs(siguiente['distancia'] - valle_actual['distancia'])
-
-        # LOGICA DE FUSION:
-        # Si estan cerca (hueco pequeno) Y tienen una profundidad parecida...
-        if hueco < max_gap_grados and diff_dist < max_diff_distancia:
-            # ... los fusionamos en uno solo mas grande.
-
-            # Nuevo rango angular
-            nuevo_min = valle_actual['min_ang']
-            nuevo_max = siguiente['max_ang']
-            nuevo_ancho = nuevo_max - nuevo_min
-
-            # Nueva distancia (promedio ponderado simple o promedio directo)
-            nueva_dist = (valle_actual['distancia'] + siguiente['distancia']) / 2
-
-            # Actualizamos el "valle_actual" con los datos fusionados
-            valle_actual = {
-                'centro': (nuevo_min + nuevo_max) / 2,
-                'distancia': nueva_dist,
-                'ancho': nuevo_ancho,
-                'min_ang': nuevo_min,
-                'max_ang': nuevo_max
-            }
-        else:
-            # Si no se pueden juntar, guardamos el actual y pasamos al siguiente
-            valles_limpios.append(valle_actual)
-            valle_actual = siguiente
-
-    # Anadir el ultimo que quedo pendiente
-    valles_limpios.append(valle_actual)
-    return valles_limpios
-
-
-sound = Sound()
-
 def analizar_valles(points, umbral_distancia=80, max_salto=20, grados_totales=360):
     """
-    Analiza los puntos para detectar objetos.
-    Detecta un nuevo valle si:
+    Analiza los puntos para detectar objetos. Detecta un nuevo valle si:
     1. Se entra en el umbral de distancia.
     2. Estando dentro, hay un cambio brusco de profundidad (max_salto).
 
@@ -173,7 +113,6 @@ def analizar_valles(points, umbral_distancia=80, max_salto=20, grados_totales=36
 
     Devuelve list[(angulo, dist, ancho)...]
     """
-    global sound
     datos = convertir_tiempo_a_angulo(points, grados_totales)
 
     valles_crudos = []
@@ -182,7 +121,7 @@ def analizar_valles(points, umbral_distancia=80, max_salto=20, grados_totales=36
     en_valle = False
     inicio_valle = 0
     puntos_valle = []
-    ultima_distancia_valida = 0 # Para comparar saltos
+    ultima_distancia_valida = 0
 
     for angulo, dist in datos:
 
@@ -190,7 +129,6 @@ def analizar_valles(points, umbral_distancia=80, max_salto=20, grados_totales=36
         if dist > umbral_distancia:
             if en_valle:
                 # SE ACABO EL VALLE (Salimos al fondo)
-                # -------------------------------------------------
                 en_valle = False
                 fin_valle = angulo
 
@@ -221,13 +159,13 @@ def analizar_valles(points, umbral_distancia=80, max_salto=20, grados_totales=36
                 ultima_distancia_valida = dist
 
             else:
-                # YA ESTABAMOS EN UN VALLE, CHEQUEAR CONTINUIDAD
+                # YA ESTABAMOS EN UN VALLE, CHEQUEAR
                 # Calculamos si hay un salto brusco respecto a la medida anterior
                 salto = abs(dist - ultima_distancia_valida)
 
                 if salto > max_salto:
                     # SALTO DETECTADO: SON DOS OBJETOS DISTINTOS PEGADOS
-                    # 1. Cerramos el valle anterior justo aqui
+                    # Cerramos el valle anterior justo aqui
                     fin_valle = angulo
 
                     dist_promedio = sum(puntos_valle) / len(puntos_valle)
@@ -242,7 +180,7 @@ def analizar_valles(points, umbral_distancia=80, max_salto=20, grados_totales=36
                         'max_ang': fin_valle
                     })
 
-                    # 2. Abrimos inmediatamente el nuevo valle
+                    # Abrimos inmediatamente el nuevo valle
                     # (No ponemos en_valle=False porque seguimos dentro del umbral)
                     inicio_valle = angulo
                     puntos_valle = [dist]
@@ -265,11 +203,7 @@ def analizar_valles(points, umbral_distancia=80, max_salto=20, grados_totales=36
             'max_ang': fin_valle
         })
 
-    print("Valles crudos detectados (con segmentacion):", len(valles_crudos))
-
-    # IMPORTANTE: Aumentamos un poco max_diff_distancia en la fusion
-    # para que si el salto fue por ruido y no es tan grande, se vuelvan a unir.
-    valles_finales = valles_crudos #fusionar_valles_cercanos(valles_crudos, max_gap_grados=20, max_diff_distancia=max_salto)
+    valles_finales = valles_crudos
 
     resultado = []
     for v in valles_finales:
