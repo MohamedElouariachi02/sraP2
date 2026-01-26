@@ -92,6 +92,16 @@ def seguir_linea(seconds=3):
         else:
             girar_blanco(10, velocidad=40)
 
+def seguir_linea_modificado(seconds=3):
+    start = time.time()
+    while time.time() - start < seconds:
+        if color_sensor.reflected_light_intensity > (blanco * 0.7):
+            girar_negro(5, velocidad=10, block=True)
+            recto(0.05)
+        else:
+            girar_blanco(5, velocidad=10, block=True)
+            recto(0.05)
+
 def buscar_palos():
     angulo = 0
     palo1 = None
